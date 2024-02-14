@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">All Requests</h4>
+  <button
+    type="button"
+    class="btn-close close pull-right"
+    aria-label="Close"
+    (click)="bsModalRef.hide()"
+  >
+    <span aria-hidden="true" class="visually-hidden">&times;</span>
+  </button>
+</div>
+<div class="modal-body p-0">
+  <ul *ngFor="let item of requestList" class="p-0 m-0">
+    <li
+      class="list-unstyled d-flex justify-content-between hover:bg-blue-100 py-3 px-4"
+    >
+      <div>
+        <img
+          src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+          class="rounded-circle me-2"
+          style="height: 30px; width: 30px"
+        />
+        {{ item.sender.userName | uppercase }}
+      </div>
+      <div *ngIf="item.requestStatus == 2" class="fs-3">
+        <span
+          ><i
+            class="fa-solid fa-check text-primary mx-2 cursor-pointer"
+            (click)="acceptRequest(item)"
+          ></i
+        ></span>
+        <span
+          ><i
+            class="fa-solid fa-xmark text-danger mx-2 cursor-pointer"
+            (click)="rejectRequest(item)"
+          ></i
+        ></span>
+      </div>
+      <div *ngIf="item.requestStatus == 0" class="text-white bg-green-400 px-2 py-1 rounded">Request Accepted</div>
+      <div *ngIf="item.requestStatus == 1" class="text-white bg-red-400 px-2 py-1 rounded">Request Rejected</div>
+    </li>
+  </ul>
+</div>

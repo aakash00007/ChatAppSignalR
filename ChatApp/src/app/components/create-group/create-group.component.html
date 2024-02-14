@@ -1,0 +1,40 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Create Group</h4>
+  <button
+    type="button"
+    class="btn-close close pull-right"
+    aria-label="Close"
+    (click)="bsModalRef.hide()"
+  >
+    <span aria-hidden="true" class="visually-hidden">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="createGroupForm">
+    <div class="mb-3 form-outline">
+      <label class="form-label">Group Name</label>
+      <input type="text" formControlName="name" class="form-control" placeholder="Enter Group Name" />
+      <small
+        class="text-danger"
+        *ngIf="
+          createGroupForm.controls['name'].dirty &&
+          createGroupForm.hasError('required', 'name')
+        "
+        >*Group Name is required</small
+      >
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    data-bs-dismiss="modal"
+    (click)="bsModalRef.hide()"
+  >
+    Close
+  </button>
+  <button type="button" class="btn btn-primary" (click)="createNewGroup()">
+    Create
+  </button>
+</div>

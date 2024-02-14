@@ -1,0 +1,319 @@
+<app-header></app-header>
+<h3 class="text-center" style="margin-top: 5rem">Chat App</h3>
+<div class="container h-30rem">
+  <button class="btn btn-success me-2" (click)="openAllUsers()">
+    Add Friends
+  </button>
+  <button type="button" (click)="openAllRequests()" class="btn btn-primary position-relative">
+    Requests
+    <span *ngIf="reqCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      {{reqCount}}
+    </span>
+  </button>
+  <div class="row mt-5 h-100 d-flex justify-content-between">
+    <div class="col-md-3 bg-blue-100 px-3 rounded-3 scrollbar">
+      <div
+        class="header bg-blue-100 d-flex justify-content-between py-3 mb-3 sticky-top"
+      >
+        <div class="d-flex justify-content-evenly" style="width: 90%">
+          <div
+            class="fs-5 px-3 py-1 cursor-pointer hover:underline active-header"
+            [class.active-header]="showUserList"
+            (click)="showUsers()"
+          >
+            Contacts
+          </div>
+          <div
+            class="fs-5 px-3 py-1 cursor-pointer hover:underline active-header"
+            [class.active-header]="showGroupList"
+            (click)="showGroups()"
+          >
+            Groups
+          </div>
+        </div>
+        <div class="pt-2">
+          <div>
+            <i
+              title="Add Group"
+              class="fa-solid fa-user-group text-primary cursor-pointer fs-5"
+              (click)="openModal()"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="showUserList">
+        <ul *ngFor="let item of contactList">
+          <li
+            class="d-flex justify-content-start ps-4"
+            [class.active]="
+              item.userId == senderId
+                ? item.friend.isActive
+                : item.user.isActive
+            "
+            (click)="chatWithUser(item)"
+          >
+            <div class="box">
+              <img
+                [src]="item.userId == senderId ? getRelativeUrl(item.friend.imageUrl) : getRelativeUrl(item.user.imageUrl)"
+                class="rounded-circle me-2"
+                style="height: 30px; width: 30px"
+              />
+              <span
+                class="user-status"
+                [class.offline]="
+                  item.userId == senderId
+                    ? !item.friend.isOnline
+                    : !item.user.isOnline
+                "
+              ></span>
+            </div>
+            <div>
+              {{
+                item.userId == senderId
+                  ? item.friend.userName
+                  : item.user.userName
+              }}
+            </div>
+            <div
+              *ngIf="
+                item.userId == senderId
+                  ? item.friend.count > 0 && !null && !undefined
+                  : item.user.count > 0 && !null && !undefined
+              "
+              class="ms-auto"
+            >
+              <span class="message-count px-2">
+                {{
+                  item.userId == senderId ? item.friend.count : item.user.count
+                }}
+              </span>
+            </div>
+            <div
+              [class]="
+                item.friend.count > 0 || item.user.count > 0
+                  ? 'ms-3'
+                  : 'ms-auto'
+              "
+              (click)="removeContact(item)"
+            >
+              <i class="fa-solid fa-user-xmark text-primary"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="showGroupList">
+        <ul *ngFor="let item of groupList">
+          <li
+            class="d-flex justify-content-start ps-4"
+            [class.active]="item.isActive"
+            (click)="chatInGroup(item)"
+          >
+            <div class="box">
+              <img
+                src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+                class="rounded-circle me-2"
+                style="height: 30px; width: 30px"
+              />
+            </div>
+            <div>
+              {{ item.name }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-8 bg-gray-100 h-100 p-3 rounded-3 relative">
+      <div
+        *ngIf="groupSelected && hasJoined"
+        class="sticky-top d-flex justify-content-between bg-white rounded p-2 mb-1"
+      >
+        <div class="cursor-pointer" (click)="showGroupMembers(currGroup)">
+          <img
+            src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+            class="rounded-circle me-2"
+            style="height: 30px; width: 30px"
+          />
+          {{ currGroup.name }}
+        </div>
+        <div
+          class="text-danger fs-6"
+          (click)="leaveGroup(currGroup.id, senderId)"
+        >
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+      </div>
+      <div *ngIf="previousChat.length == 0 && showUserList && currReciever">
+        <p class="text-center">
+          You and {{ currRecieverName }} have no messages yet.
+        </p>
+      </div>
+      <div
+        *ngIf="
+          previousGroupChat.length == 0 &&
+          groupSelected &&
+          hasJoined &&
+          showGroupList
+        "
+      >
+        <p class="text-center">No Messages in the {{ currGroup.name }} yet.</p>
+      </div>
+      <div class="chat" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+        <div *ngIf="previousChat && showUserList && currReciever">
+          <div *ngFor="let message of previousChat">
+            <div
+              class="d-flex justify-content-start mb-2"
+              *ngIf="message.type === 'received'"
+            >
+              <div class="box d-flex flex-column mb-3">
+                <div class="d-flex justify-content-start">
+                  <img
+                    src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+                    class="rounded-circle me-2"
+                    style="height: 30px; width: 30px"
+                  />
+                  {{ message.messageContent }}
+                </div>
+                <div class="d-flex flex-column">
+                  <span
+                    class="text-gray-400 text-start"
+                    style="font-size: 12px"
+                    >{{ currRecieverName }}</span
+                  >
+                  <span
+                    class="text-gray-400 text-start"
+                    style="font-size: 12px"
+                    >{{ message.timeStamp | date : "YYYY/MM/dd hh:mm" }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="d-flex justify-content-end mb-2"
+              *ngIf="message.type === 'sent'"
+            >
+              <div class="box d-flex flex-column mb-3">
+                <div class="d-flex justify-content-end mb-1">
+                  {{ message.messageContent }}
+                  <img
+                    src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+                    class="rounded-circle ms-2"
+                    style="height: 30px; width: 30px"
+                  />
+                </div>
+                <div class="d-flex flex-column">
+                  <span
+                    class="text-gray-400 text-end"
+                    style="font-size: 12px"
+                    >{{ currSenderName }}</span
+                  >
+                  <span
+                    class="text-gray-400 text-end"
+                    style="font-size: 12px"
+                    >{{ message.timeStamp | date : "YYYY/MM/dd hh:mm" }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="previousGroupChat && showGroupList && currGroup">
+          <div *ngFor="let message of previousGroupChat">
+            <div
+              class="d-flex justify-content-start mb-2"
+              *ngIf="message.type === 'received'"
+            >
+              <div class="box d-flex flex-column mb-3">
+                <div class="d-flex justify-content-start">
+                  <img
+                    src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+                    class="rounded-circle me-2"
+                    style="height: 30px; width: 30px"
+                  />
+                  {{ message.messageContent }}
+                </div>
+                <div class="d-flex flex-column">
+                  <span
+                    class="text-gray-400 text-start"
+                    style="font-size: 12px"
+                    >{{ currRecieverName }}</span
+                  >
+                  <span
+                    class="text-gray-400 text-start"
+                    style="font-size: 12px"
+                    >{{ message.timeStamp | date : "YYYY/MM/dd hh:mm" }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="d-flex justify-content-end mb-2"
+              *ngIf="message.type === 'sent'"
+            >
+              <div class="box d-flex flex-column mb-3">
+                <div class="d-flex justify-content-end mb-1">
+                  {{ message.messageContent }}
+                  <img
+                    src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+                    class="rounded-circle ms-2"
+                    style="height: 30px; width: 30px"
+                  />
+                </div>
+                <div class="d-flex flex-column">
+                  <span
+                    class="text-gray-400 text-end"
+                    style="font-size: 12px"
+                    >{{ currSenderName }}</span
+                  >
+                  <span
+                    class="text-gray-400 text-end"
+                    style="font-size: 12px"
+                    >{{ message.timeStamp | date : "YYYY/MM/dd hh:mm" }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="!hasJoined && showGroupList && groupSelected"
+          class="d-flex justify-content-center align-items-center h-100"
+        >
+          <button class="btn btn-success" (click)="joinGroup()">
+            Join Group
+          </button>
+        </div>
+      </div>
+
+      <div
+        *ngIf="(hasJoined && showGroupList) || showUserList"
+        class="sticky-bottom absolute d-flex align-content-center m-2 emoji-box"
+        style="width: 95%"
+      >
+        <input
+          type="text"
+          [(ngModel)]="currentMessage"
+          placeholder="Send Message"
+          class="form-control-lg border-1 w-100"
+        />
+        <button
+          class="emoji-btn"
+          (click)="isEmojiPickerVisible = !isEmojiPickerVisible"
+        >
+          <i class="fa-regular fa-face-smile"></i>
+        </button>
+        <emoji-mart
+          class="emoji-mart emoji-picker"
+          *ngIf="isEmojiPickerVisible"
+          (emojiSelect)="addEmoji($event)"
+          title="Choose your emoji"
+        ></emoji-mart>
+        <button class="btn btn-primary" type="button" (click)="sendMessage()">
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

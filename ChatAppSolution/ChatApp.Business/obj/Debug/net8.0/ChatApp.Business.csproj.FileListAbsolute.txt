@@ -1,0 +1,15 @@
+D:\ChatApp\ChatAppSolution\ChatApp.Business\bin\Debug\net8.0\ChatApp.Business.deps.json
+D:\ChatApp\ChatAppSolution\ChatApp.Business\bin\Debug\net8.0\ChatApp.Business.dll
+D:\ChatApp\ChatAppSolution\ChatApp.Business\bin\Debug\net8.0\ChatApp.Business.pdb
+D:\ChatApp\ChatAppSolution\ChatApp.Business\bin\Debug\net8.0\ChatApp.Data.dll
+D:\ChatApp\ChatAppSolution\ChatApp.Business\bin\Debug\net8.0\ChatApp.Data.pdb
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.csproj.AssemblyReference.cache
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.GeneratedMSBuildEditorConfig.editorconfig
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.AssemblyInfoInputs.cache
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.AssemblyInfo.cs
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.csproj.CoreCompileInputs.cache
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.csproj.CopyComplete
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.dll
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\refint\ChatApp.Business.dll
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ChatApp.Business.pdb
+D:\ChatApp\ChatAppSolution\ChatApp.Business\obj\Debug\net8.0\ref\ChatApp.Business.dll
